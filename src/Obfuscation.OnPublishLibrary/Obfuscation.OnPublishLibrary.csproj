@@ -1,0 +1,128 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Description>在发布后、自动混淆。在混淆后、自动打包。在打包后，自动推送到NuGet</Description>
+    <!--是一个nuget包-->
+    <IsPackable>true</IsPackable>
+    <!--不希望总是在Build之后自动生成包-->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <CreatePackageOnPublish>true</CreatePackageOnPublish>
+    <!--包含Symbols, 不要可以去掉. Ref: https://docs.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg-->
+    <IncludeSymbols>true</IncludeSymbols>
+    <!--Symbols格式, 不要可以去掉. Ref: https://docs.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg-->
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <VersionPrefix>1.0.2</VersionPrefix>
+    <!--发布时，编译成R2R格式-->
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <PackageReference Include="Obfuscation.Tasks" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!--在打包前，且 Configuration 是 Release 时，触发混淆。-->
+  <Target Name="Obfuscation" BeforeTargets="GenerateNuspec">
+    <ConvertToAbsolutePath Paths="$(OutputPath)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="AbsoluteOutputPath" />
+    </ConvertToAbsolutePath>
+    <Message Text="AbsoluteOutputPath: $(AbsoluteOutputPath)" Importance="high" />
+
+    <!--
+      假设有上一次混淆的文件，删除。
+      Ref: https://docs.microsoft.com/en-us/visualstudio/msbuild/delete-task?view=vs-2022
+    -->
+    <Delete Files="$(AbsoluteOutputPath)$(MSBuildProjectName)_Secure.dll">
+      <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
+    </Delete>
+    <Message Text="Deleted secure files: @(DeletedList)" Importance="high" />
+
+    <ItemGroup>
+      <DependencyFilePaths Include="$(AbsoluteOutputPath)*.dll" Exclude="$(TargetPath)" />
+    </ItemGroup>
+    <Message Text="DependencyFilePaths: @(DependencyFilePaths)" Importance="high" />
+
+    <!--
+      Input Parameters:
+        ToolDir: Required。Example: \\192.168.1.155\dll
+        InputFilePaths: Required。Default value: $(TargetPath). Single example: D:\sources\ObfuscationSamples\ObfuscationSamples\bin\Release\ObfuscationSamples.dll; Multiple examples: $(TargetPath);D:\ref\Samples1.dll;D:\ref\Samples2.dll
+        DependencyFiles: Optional. Example: $(OutputPath)Serilog.dll;$(OutputPath)Serilog.Sinks.Console.dll
+        TimeoutMillisecond: Optional。Default value: 30000
+        Importance: Optional。Default value: Normal。Options: High, Normal, Low
+        OutputFileNameSuffix: Optional. Default value: _Secure
+      
+      Output Parameters:
+        OutputFilePaths: string。Default value: $(InputFilePaths)$(OutputFileNameSuffix).dll. Example: D:\sources\ObfuscationSamples\ObfuscationSamples\bin\Release\ObfuscationSamples_Secure.dll
+      
+      Ref: https://github.com/VAllens/Obfuscation.Tasks/blob/main/README.md
+    -->
+    <ObfuscationTask ToolDir="\\192.168.1.155\dll" InputFilePaths="$(TargetPath)" DependencyFiles="@(DependencyFilePaths)" TimeoutMillisecond="50000" Importance="high">
+      <Output TaskParameter="OutputFilePaths" PropertyName="SecuredFilePaths" />
+    </ObfuscationTask>
+
+    <!--
+      如有需要，可以顺便自动重命名文件
+      Ref: https://docs.microsoft.com/en-us/visualstudio/msbuild/move-task?view=vs-2022
+    -->
+    <Move SourceFiles="$(SecuredFilePaths)" DestinationFiles="$(TargetPath)" OverwriteReadOnlyFiles="true" />
+    <Message Text="SecuredFilePaths: $(SecuredFilePaths)" Importance="high" />
+  </Target>
+
+  <!--
+    在发布后，且 Configuration 是 Release 时，触发上传。
+    触发上传前，声明依赖 Obfuscation 和 Pack。
+  -->
+  <Target Name="PublishNuGetPackageAfterGenerateNuspec" AfterTargets="GenerateNuspec" Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <PackageFileName>$(PackageId).$(Version).nupkg</PackageFileName>
+      <SymbolPackageFileName>$(PackageId).$(Version).snupkg</SymbolPackageFileName>
+    </PropertyGroup>
+    <Message Text="PackageFileName: $(PackageFileName)" Importance="high" />
+
+    <ConvertToAbsolutePath Paths="$(PackageOutputPath)" Condition="'$(PackageOutputPath)' != ''">
+      <Output TaskParameter="AbsolutePaths" PropertyName="AbsolutePackageOutputPath" />
+    </ConvertToAbsolutePath>
+    <Message Text="PackageOutputPath: $(PackageOutputPath)" Importance="high" />
+
+    <ConvertToAbsolutePath Paths="$(OutputPath)" Condition="'$(AbsolutePackageOutputPath)' == ''">
+      <Output TaskParameter="AbsolutePaths" PropertyName="AbsolutePackageOutputPath" />
+    </ConvertToAbsolutePath>
+    <Message Text="OutputPath: $(OutputPath)" Importance="high" />
+    <Message Text="AbsolutePackageOutputPath: $(AbsolutePackageOutputPath)" Importance="high" />
+
+    <CombinePath BasePath="$(AbsolutePackageOutputPath)" Paths="$(PackageFileName)" Condition="'$(IncludeSymbols)' != 'true'">
+      <Output TaskParameter="CombinedPaths" PropertyName="NuPkgFiles" />
+    </CombinePath>
+    <CombinePath BasePath="$(AbsolutePackageOutputPath)" Paths="$(PackageFileName);$(SymbolPackageFileName)" Condition="'$(IncludeSymbols)' == 'true'">
+      <Output TaskParameter="CombinedPaths" PropertyName="NuPkgFiles" />
+    </CombinePath>
+    <Message Text="NuPkgFiles: $(NuPkgFiles)" Importance="high" />
+
+    <ConvertToAbsolutePath Paths="$(SolutionDir)">
+      <Output TaskParameter="AbsolutePaths" PropertyName="SolutionDir" />
+    </ConvertToAbsolutePath>
+    <CombinePath BasePath="$(SolutionDir)" Paths="packages">
+      <Output TaskParameter="CombinedPaths" PropertyName="OutputPackageDir" />
+    </CombinePath>
+    <Message Text="OutputPackageDir: $(OutputPackageDir)" Importance="high" />
+
+    <PropertyGroup>
+      <HasCopyPackageParameters Condition="'$(OutputPackageDir)' != '' and '$(NuPkgFiles)' != ''">true</HasCopyPackageParameters>
+    </PropertyGroup>
+
+    <!--可以不 Copy 到 packages 文件夹，直接用生成目录下的 nupkg 包上传也行。-->
+    <Copy SourceFiles="$(NuPkgFiles)" DestinationFolder="$(OutputPackageDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" Condition="'$(HasCopyPackageParameters)' == 'true'" />
+    <Message Text="Copy $(NuPkgFiles) to $(OutputPackageDir) successfully" Importance="high" Condition="'$(HasCopyPackageParameters)' == 'true'" />
+    <Error Text="NuPkgFiles or OutputPackageDir is empty" Condition="'$(HasCopyPackageParameters)' != 'true'" />
+
+    <Exec Command="dotnet nuget push $(OutputPackageDir)\*.nupkg --api-key $(NUGET_API_KEY) --source &quot;$(NuGetServerUrl)&quot; --skip-duplicate" Condition="'$(HasCopyPackageParameters)' == 'true' and '$(NUGET_API_KEY)' != ''" />
+    <Error Text="Environment variable: NUGET_API_KEY is empty" Condition="'$(NUGET_API_KEY)' == ''" />
+  </Target>
+
+</Project>

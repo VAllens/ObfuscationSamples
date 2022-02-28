@@ -1,0 +1,31 @@
+﻿<Project>
+  <PropertyGroup>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Authors>Allen.Cai</Authors>
+    <Company>启能达 (QND) Technology Co., Ltd.</Company>
+    <Copyright>Copyright © QND All Rights Reserved</Copyright>
+    <Product>Obfuscation Samples</Product>
+    <FileVersion>$([System.DateTime]::Now.ToString("yy.M.d.Hmm"))</FileVersion>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <!--Alpha release, typically used for work-in-progress and experimentation-->
+    <!--<VersionSuffix Condition="'$(Configuration)' == 'Debug'">alpha</VersionSuffix>-->
+    <!--Beta release, typically one that is feature complete for the next planned release, but may contain known bugs.-->
+    <!--<VersionSuffix Condition="'$(Configuration)' == 'Debug'">beta</VersionSuffix>-->
+    <!--Release candidate, typically a release that's potentially final (stable) unless significant bugs emerge.-->
+    <VersionSuffix Condition="'$(Configuration)' == 'Debug'">rc</VersionSuffix>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/VAllens/ObfuscationSamples</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/VAllens/ObfuscationSamples</RepositoryUrl>
+    <NuGetServerUrl>http://192.168.1.133:5555/v3/index.json</NuGetServerUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\..\</SolutionDir>
+  </PropertyGroup>
+</Project>

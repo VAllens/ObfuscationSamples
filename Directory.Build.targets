@@ -1,0 +1,20 @@
+﻿<Project>
+  <Target Name="SetSourceRevisionId" BeforeTargets="InitializeSourceControlInformation">
+    <Exec Command="git describe --long --always --exclude=* --abbrev=8"
+          ConsoleToMSBuild="True"
+          ContinueOnError="True"
+          IgnoreExitCode="True"
+          StandardOutputImportance="low"
+          StandardErrorImportance="low">
+      <Output PropertyName="SourceRevisionId" TaskParameter="ConsoleOutput" />
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Message Text="The SourceRevisionId parameter value is $(SourceRevisionId)" Importance="high" Condition="'$(ErrorCode)' == '0'" />
+    <PropertyGroup Condition="'$(ErrorCode)' != '0'">
+      <SourceRevisionId></SourceRevisionId>
+    </PropertyGroup>
+    <ItemGroup>
+      <AssemblyMetadata Include="SourceRevisionId" Value="$(SourceRevisionId)" Condition="'$(SourceRevisionId)' != ''" />
+    </ItemGroup>
+  </Target>
+</Project>

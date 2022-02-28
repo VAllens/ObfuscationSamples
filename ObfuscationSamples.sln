@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{63A3DC51-12DA-48BA-B3BF-64DFD124E99F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A357327C-9889-4007-8A56-3551C653FA4B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		LICENSE = LICENSE
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Obfuscation.AfterBuild", "src\Obfuscation.AfterBuild\Obfuscation.AfterBuild.csproj", "{E80B917B-9781-4164-BC4C-36A0AE02A2BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Obfuscation.OnPack", "src\Obfuscation.OnPack\Obfuscation.OnPack.csproj", "{B3AC189B-14D3-4B98-9D33-F7A620E36CCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Obfuscation.OnPublishExe", "src\Obfuscation.OnPublishExe\Obfuscation.OnPublishExe.csproj", "{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Obfuscation.OnPublishLibrary", "src\Obfuscation.OnPublishLibrary\Obfuscation.OnPublishLibrary.csproj", "{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E80B917B-9781-4164-BC4C-36A0AE02A2BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E80B917B-9781-4164-BC4C-36A0AE02A2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E80B917B-9781-4164-BC4C-36A0AE02A2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E80B917B-9781-4164-BC4C-36A0AE02A2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3AC189B-14D3-4B98-9D33-F7A620E36CCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3AC189B-14D3-4B98-9D33-F7A620E36CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3AC189B-14D3-4B98-9D33-F7A620E36CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3AC189B-14D3-4B98-9D33-F7A620E36CCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E80B917B-9781-4164-BC4C-36A0AE02A2BA} = {63A3DC51-12DA-48BA-B3BF-64DFD124E99F}
+		{B3AC189B-14D3-4B98-9D33-F7A620E36CCE} = {63A3DC51-12DA-48BA-B3BF-64DFD124E99F}
+		{CE7B1EF7-230D-4EB0-BEA1-101D10E97E04} = {63A3DC51-12DA-48BA-B3BF-64DFD124E99F}
+		{2F835F89-BCDC-4AC8-AE4C-6AB306BF38F6} = {63A3DC51-12DA-48BA-B3BF-64DFD124E99F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A76AF50A-0A62-4233-BA96-F27DDBA1DCFB}
+	EndGlobalSection
+EndGlobal

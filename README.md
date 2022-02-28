@@ -6,7 +6,7 @@
 
 ### 示例项目
 
-- `Obfuscation.AfterBuild`: 收到编译事件，在编译后，触发混淆、打包、推送到 NuGet。
+- `Obfuscation.AfterBuild`: 收到编译事件，在编译后，触发混淆、打包、推送到 `NuGet`。
 - `Obfuscation.OnPack`: 收到打包事件，在打包前(总是在编译完成后)，触发混淆。在打包后，推送到 `NuGet`。
 - `Obfuscation.OnPublishExe`: 收到发布事件，在发布前(总是在编译完成后)，触发混淆。在打包后，推送到 `NuGet`。
 - `Obfuscation.OnPublishLibrary`: 收到发布事件，在打包前(总是在编译完成后)，触发混淆。在打包后，推送到 `NuGet`。
